@@ -19,10 +19,10 @@ const blogSchema = new mongoose.Schema({
     },
     userId:{
         type: mongoose.Schema.Types.ObjectId,
-        ref:"user",
+        ref:"User",
         required: true
     }
 })
 
-const BlogCollection = new mongoose.model("blog",blogSchema)
-module.exports = BlogCollection
+const blog = new mongoose.model("Blog",blogSchema)
+module.exports = blog

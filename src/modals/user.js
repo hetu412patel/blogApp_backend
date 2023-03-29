@@ -46,20 +46,20 @@ const userSchema = new mongoose.Schema({
         required: true,
         lowercase:true,
         enum: ["admin", "user"]
-    },
-    tokens:[{
-        token:{
-            type: String,
-            required: true
-        }
-    }]
+    }
+    // tokens:[{
+    //     token:{
+    //         type: String,
+    //         required: true
+    //     }
+    // }]
 })
 
 userSchema.methods.generateAuthToken = async function(){
     try{
         const token = jwt.sign({_id: this._id}, process.env.SECRET_KEY)
-        this.tokens = this.tokens.concat({token})
-        await this.save()
+        // this.tokens = this.tokens.concat({token})
+        // await this.save()
         return token
     }catch(e){
         res.json({message:'Token is not generated due to some reason'})
@@ -74,5 +74,5 @@ userSchema.pre("save", async function(next){
     next()
 })
 
-const UserCollection = new mongoose.model("user", userSchema)
-module.exports = UserCollection
+const User = new mongoose.model("User", userSchema)
+module.exports = User
