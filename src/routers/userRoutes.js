@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs")
 const { authorizeAdmin } = require("../middleware/auth")
 
 router.post("/register", async (req,res)=>{
+        const {name, email, password, confirmpassword,country, addresss, gender} = req.body
     try{
         const password = req.body.password
         const confirmpassword = req.body.confirmpassword
@@ -62,12 +63,13 @@ router.patch("/changerole/:id", authorizeAdmin ,async(req,res)=>{
 })
 
 router.post('/login', async(req,res)=>{
-    try{
-        const useremail = await User.findOne({email:req.body.email})
-        
-        const isMatch = await bcrypt.compare(req.body.password, useremail.password)
+        const {email, password} = req.body
 
+    try{
+        const useremail = await User.findOne({email:email})
+        const isMatch = await bcrypt.compare(password, useremail.password)
         const token = await useremail.generateAuthToken()
+        
         // console.log("dfdg",token);
         
         // res.cookie("jwt", token, {
@@ -77,6 +79,7 @@ router.post('/login', async(req,res)=>{
 
         if(isMatch){
             res.status(200).json({message: "Login successfully", token: token})
+            localStorage.setItem("token", token)
         }else{
             res.status(400).json({message:"Invalid Login Details"})
         }

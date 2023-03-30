@@ -6,7 +6,6 @@ const router = new express.Router()
 router.post("/addblog" ,authorizeAdmin, async (req,res)=>{
     const formData = req.body
     try{
-        console.log("hhh", req.user);
         const data = {...formData, userId: req.user}
         const addBlog = new blog(data)
         const blog1 = await addBlog.save()
@@ -26,7 +25,7 @@ router.get("/myblogs",authorizeAdmin, async(req, res)=>{
     }
 } )
 
-router.get("/allblogs" ,async(req,res)=>{
+router.get("/allblogs", async(req,res)=>{
     try{
         const allBlog = await blog.find()
         if(!allBlog){
@@ -38,20 +37,20 @@ router.get("/allblogs" ,async(req,res)=>{
     }
 })
 
-// router.get("/:blogid", {authorizeUser, authorizeAdmin} , async(req,res)=>{
-//     try{
-//         const _id = req.params.blogid
-//         const singleBlog = await blog.findOneById(_id)
+router.get("/blog/:blogid", async(req,res)=>{
+    try{
+        const _id = req.params.blogid
+        const singleBlog = await blog.findById(_id)
 
-//         if(!singleBlog){
-//             res.status(400).json({message:"blog Not Found"})
-//         }
-//         res.status(200).json({msg:"view your blog", data: singleBlog})
-//     }catch(e){
-//         console.log(e.message);
-//         res.status(400).json({msg:"server error"})
-//     }
-// })
+        if(!singleBlog){
+            res.status(400).json({message:"blog Not Found"})
+        }
+        res.status(200).json({msg:"view your blog", data: singleBlog})
+    }catch(e){
+        console.log(e.message);
+        res.status(400).json({msg:"server error"})
+    }
+})
 
 router.delete("/delete/:blogid",authorizeAdmin, async(req,res)=>{
     try{
