@@ -4,10 +4,16 @@ const {authorizeAdmin} = require("../middleware/auth")
 const router = new express.Router()
 
 router.post("/addblog" ,authorizeAdmin, async (req,res)=>{
-    const formData = req.body
+    // console.log("response.body", req.body);
+    console.log("dffgd", req.user);
     try{
-        const data = {...formData, userId: req.user}
-        const addBlog = new blog(data)
+        const addBlog = new blog({
+            title: req.body.title,
+            description: req.body.description,
+            author: req.body.author, 
+            category: req.body.category,
+            userId: req.user
+        })
         const blog1 = await addBlog.save()
         res.status(201).json({message:"Blog added successfully", data: blog1})
     }catch(e){
@@ -23,7 +29,7 @@ router.get("/myblogs",authorizeAdmin, async(req, res)=>{
     }catch(e){
         res.status(400).json({message:"Error"})
     }
-} )
+})
 
 router.get("/allblogs", async(req,res)=>{
     try{

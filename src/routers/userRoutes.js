@@ -5,13 +5,23 @@ const bcrypt = require("bcryptjs")
 const { authorizeAdmin } = require("../middleware/auth")
 
 router.post("/register", async (req,res)=>{
-        const {name, email, password, confirmpassword,country, addresss, gender} = req.body
+    // console.log("hhh",req.body);
     try{
         const password = req.body.password
         const confirmpassword = req.body.confirmpassword
 
         if(password === confirmpassword){
-            const addUser = new User(req.body)
+            const addUser = new User({
+                name: req.body.name,
+                email: req.body.email,
+                password : password,
+                confirmpassword : confirmpassword,
+                country : req.body.country,
+                address : req.body.address,
+                gender : req.body.gender,
+                role : ''
+            })
+            // console.log("ddde" , addUser);
             // here we perform middleware concept and convert text password into hash(bcrypt) and to generate jwt token
             // const token = await addUser.generateAuthToken()
 
@@ -20,6 +30,7 @@ router.post("/register", async (req,res)=>{
             // })
             
             const user = await addUser.save()
+            // console.log("user", user);
             res.status(201).send(user)
         }else{
             res.json({message:"Make sure password and confirmpassword are matching"})
@@ -63,7 +74,8 @@ router.patch("/changerole/:id", authorizeAdmin ,async(req,res)=>{
 })
 
 router.post('/login', async(req,res)=>{
-        const {email, password} = req.body
+        const email = req.body.email
+        const password = req.body.password
 
     try{
         const useremail = await User.findOne({email:email})
@@ -78,8 +90,7 @@ router.post('/login', async(req,res)=>{
         // })
 
         if(isMatch){
-            res.status(200).json({message: "Login successfully", token: token})
-            localStorage.setItem("token", token)
+            res.status(200).json({message: "Login successfully", token: token, data: useremail})
         }else{
             res.status(400).json({message:"Invalid Login Details"})
         }

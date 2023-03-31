@@ -5,14 +5,13 @@ const authorizeAdmin = async (req,res,next) => {
     
     const token = req.header("Authorization")?.replace("Bearer ",'')
     // console.log("fv",token);
-
     if(!token){
         return res.status(400).json({message:"user not authorized"})
     }
-    
     try{
         const verifyUser = jwt.verify(token, process.env.SECRET_KEY)
         const user = await User.findOne({_id: verifyUser._id})
+        // console.log("fgf",user);
         req.user = user._id
         if(user.role !== "admin"){
             return res.status(400).json({message:"Authorize first as admin"})
