@@ -44,8 +44,8 @@ router.post("/register", async (req,res)=>{
 router.get("/alluser", authorizeAdmin, async (req,res) => {
     try{
         const allUser = await User.find({})
-        console.log("frtrgtg",allUser);
-        res.status(200).json({data: allUser})
+        // console.log("frtrgtg",allUser);
+        res.status(200).json({data: allUser})               
     }catch(e){
         console.log(e.message);
         res.status(400).json({msg: "server error"})
@@ -54,6 +54,7 @@ router.get("/alluser", authorizeAdmin, async (req,res) => {
 
 router.patch("/changerole/:id", authorizeAdmin ,async(req,res)=>{
     const {role} = req.body
+    // console.log("role", req.body);
     try{
         const _id = req.params.id
         const user = await User.findById(_id)
@@ -64,11 +65,13 @@ router.patch("/changerole/:id", authorizeAdmin ,async(req,res)=>{
         const editUser = await User.findByIdAndUpdate(user._id, {role} , {
             new: true
         })
+        console.log("edit", editUser);
         if(!editUser){
             return res.status(400).json({message:"No user found"})
         }
         res.status(200).send(editUser)
     }catch(e){
+        console.log(e.message); 
         res.status(400).send(e)
     }
 })

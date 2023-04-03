@@ -77,6 +77,7 @@ router.patch("/update/:blogid",authorizeAdmin ,async(req,res)=>{
         const editBlog = await blog.findByIdAndUpdate(_id, req.body, {
             new: true
         })
+        console.log("edit",editBlog );
         if(!editBlog){
             return res.status(400).json({message:"No blog found"})
         }
