@@ -65,7 +65,7 @@ router.patch("/changerole/:id", authorizeAdmin ,async(req,res)=>{
         const editUser = await User.findByIdAndUpdate(user._id, {role} , {
             new: true
         })
-        console.log("edit", editUser);
+        // console.log("edit", editUser);
         if(!editUser){
             return res.status(400).json({message:"No user found"})
         }

@@ -1,23 +1,27 @@
 const express = require("express")
 const blog = require("../modals/blog")
 const {authorizeAdmin} = require("../middleware/auth")
+const {upload} = require('../middleware/uploadImage')
 const router = new express.Router()
 
-router.post("/addblog" ,authorizeAdmin, async (req,res)=>{
-    // console.log("response.body", req.body);
-    console.log("dffgd", req.user);
+// const multer = require('multer')
+// const upload = multer({dest: 'images/'})
+
+router.post("/addblog",authorizeAdmin,upload.single('blogImage'), async (req,res)=>{
     try{
         const addBlog = new blog({
             title: req.body.title,
             description: req.body.description,
             author: req.body.author, 
+            blogImage: req.file.filename,
             category: req.body.category,
             userId: req.user
         })
+        // console.log("add", addBlog);
         const blog1 = await addBlog.save()
         res.status(201).json({message:"Blog added successfully", data: blog1})
     }catch(e){
-        console.log("detgf",e);
+        // console.log("detgf",e);
         res.status(400).json({message:"Internal error", data: e})
     }
 })
@@ -26,7 +30,7 @@ router.get("/myblogs",authorizeAdmin, async(req, res)=>{
     try{
         const blogs = await blog.find({userId: req.user})
         res.status(201).json({message:"Blog get successfully", data: blogs})
-    }catch(e){
+    }catch(e){if(file.mimetype.split('/')[0] === 'image')
         res.status(400).json({message:"Error"})
     }
 })
@@ -47,13 +51,16 @@ router.get("/blog/:blogid", async(req,res)=>{
     try{
         const _id = req.params.blogid
         const singleBlog = await blog.findById(_id)
-
+        // console.log("chjj",singleBlog);
         if(!singleBlog){
             res.status(400).json({message:"blog Not Found"})
         }
+
+        singleBlog.blogImage = `${req.protocol}://${req.get('host')}/images/${singleBlog.blogImage}`
+        // console.log("url", singleBlog);
         res.status(200).json({msg:"view your blog", data: singleBlog})
     }catch(e){
-        console.log(e.message);
+        // console.log(e.message);
         res.status(400).json({msg:"server error"})
     }
 })
@@ -71,13 +78,13 @@ router.delete("/delete/:blogid",authorizeAdmin, async(req,res)=>{
     }
 })
 
-router.patch("/update/:blogid",authorizeAdmin ,async(req,res)=>{
+router.patch("/update/:blogid",authorizeAdmin , upload.single('blogImage'), async(req,res)=>{
     try{
         const _id = req.params.blogid
         const editBlog = await blog.findByIdAndUpdate(_id, req.body, {
             new: true
         })
-        console.log("edit",editBlog );
+        // console.log("edit",editBlog );
         if(!editBlog){
             return res.status(400).json({message:"No blog found"})
         }
