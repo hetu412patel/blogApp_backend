@@ -22,3 +22,9 @@ app.use(cookieparser())
 app.listen(port, ()=>{
     console.log(`connection is setup at port ${port}`);
 })
+
+// const server = app.listen(5000)
+// const io = require('socket.io')(server)
+// io.on('connection', socket => {
+//     console.log("client connected");    
+// })
