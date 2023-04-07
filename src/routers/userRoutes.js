@@ -19,7 +19,7 @@ router.post("/register", async (req,res)=>{
                 country : req.body.country,
                 address : req.body.address,
                 gender : req.body.gender,
-                role : ''
+                role : 'user'
             })
             // console.log("ddde" , addUser);
             // here we perform middleware concept and convert text password into hash(bcrypt) and to generate jwt token
