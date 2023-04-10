@@ -3,6 +3,7 @@ const blog = require("../modals/blog")
 const {authorizeAdmin} = require("../middleware/auth")
 const {upload} = require('../middleware/uploadImage')
 const router = new express.Router()
+const fs = require('fs')
 
 // const multer = require('multer')
 // const upload = multer({dest: 'images/'})
@@ -28,7 +29,12 @@ router.post("/addblog",authorizeAdmin,upload.single('blogImage'), async (req,res
 
 router.get("/myblogs",authorizeAdmin, async(req, res)=>{
     try{
-        const blogs = await blog.find({userId: req.user})
+        const myBlogs = await blog.find({userId: req.user})
+
+        myBlogs.forEach((blog) => {
+            blog.blogImage = `${req.protocol}://${req.get('host')}/images/${blog.blogImage}`
+        })
+
         res.status(201).json({message:"Blog get successfully", data: blogs})
     }catch(e){if(file.mimetype.split('/')[0] === 'image')
         res.status(400).json({message:"Error"})
@@ -38,6 +44,10 @@ router.get("/myblogs",authorizeAdmin, async(req, res)=>{
 router.get("/allblogs", async(req,res)=>{
     try{
         const allBlog = await blog.find()
+
+        allBlog.forEach((blog) => {
+            blog.blogImage = `${req.protocol}://${req.get('host')}/images/${blog.blogImage}`
+        })
         if(!allBlog){
             res.status(400).json({message:"No Blog Found"})
         }
@@ -68,6 +78,19 @@ router.get("/blog/:blogid", async(req,res)=>{
 router.delete("/delete/:blogid",authorizeAdmin, async(req,res)=>{
     try{
         const _id = req.params.blogid
+
+        const findblog = await blog.findById(_id)
+
+        if(findblog.userId !== req.user){
+            return res.status(400).json({message: "You can't delete another admin blog"})
+        }
+
+        fs.unlink(`images/${findblog.blogImage}`, (err) => {
+            if(err){
+                console.log(err);
+            }
+        })
+        
         const deleteBlog = await blog.findByIdAndDelete(_id)
         if(!deleteBlog){
             return res.status(400).send("Blog is not found for delete")
@@ -81,7 +104,24 @@ router.delete("/delete/:blogid",authorizeAdmin, async(req,res)=>{
 router.patch("/update/:blogid",authorizeAdmin , upload.single('blogImage'), async(req,res)=>{
     try{
         const _id = req.params.blogid
-        const editBlog = await blog.findByIdAndUpdate(_id, req.body, {
+        const formData = req.body
+        const data = {...formData, blogImage : req.file.filename}
+
+        const findblog = await blog.findById(_id)
+
+        if(findblog.userId !== req.user){
+            return res.status(400).json({message: "You can't update another admin blog"})
+        }
+
+        if(req.file.filename){
+            fs.unlink(`images/${findblog.blogImage}`, (err) => {
+                if(err){
+                    console.log(err);
+                }
+            })
+        }
+
+        const editBlog = await blog.findByIdAndUpdate(_id, data , {
             new: true
         })
         // console.log("edit",editBlog );

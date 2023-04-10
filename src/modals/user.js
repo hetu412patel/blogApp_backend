@@ -27,20 +27,20 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    country:{
-        type: String,
-        required: true
-    },
+    // country:{
+    //     type: String,
+    //     required: true
+    // },
     address:{
         type: String,
         required: true
     },
-    gender:{
-        type: String,
-        required: true,
-        lowercase:true,
-        enum: ["male", "female"]
-    },
+    // gender:{
+    //     type: String,
+    //     required: true,
+    //     lowercase:true,
+    //     enum: ["male", "female"]
+    // },
     role:{
         type: String,
         lowercase:true,
