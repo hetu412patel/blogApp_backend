@@ -5,7 +5,6 @@ const bcrypt = require("bcryptjs")
 const { authorizeAdmin } = require("../middleware/auth")
 
 router.post("/register", async (req,res)=>{
-    // console.log("hhh",req.body);
     try{
         const password = req.body.password
         const confirmpassword = req.body.confirmpassword
@@ -30,7 +29,6 @@ router.post("/register", async (req,res)=>{
             // })
             
             const user = await addUser.save()
-            // console.log("user", user);
             res.status(201).send(user)
         }else{
             res.json({message:"Make sure password and confirmpassword are matching"})
@@ -54,7 +52,6 @@ router.get("/alluser", authorizeAdmin, async (req,res) => {
 
 router.patch("/changerole/:id", authorizeAdmin ,async(req,res)=>{
     const {role} = req.body
-    // console.log("role", req.body);
     try{
         const _id = req.params.id
         const user = await User.findById(_id)
@@ -65,7 +62,6 @@ router.patch("/changerole/:id", authorizeAdmin ,async(req,res)=>{
         const editUser = await User.findByIdAndUpdate(user._id, {role} , {
             new: true
         })
-        // console.log("edit", editUser);
         if(!editUser){
             return res.status(400).json({message:"No user found"})
         }

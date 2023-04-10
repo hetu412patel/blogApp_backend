@@ -18,7 +18,6 @@ router.post("/addblog",authorizeAdmin,upload.single('blogImage'), async (req,res
             category: req.body.category,
             userId: req.user
         })
-        // console.log("add", addBlog);
         const blog1 = await addBlog.save()
         res.status(201).json({message:"Blog added successfully", data: blog1})
     }catch(e){
@@ -44,10 +43,11 @@ router.get("/myblogs",authorizeAdmin, async(req, res)=>{
 router.get("/allblogs", async(req,res)=>{
     try{
         const allBlog = await blog.find()
-
+        
         allBlog.forEach((blog) => {
             blog.blogImage = `${req.protocol}://${req.get('host')}/images/${blog.blogImage}`
         })
+
         if(!allBlog){
             res.status(400).json({message:"No Blog Found"})
         }
@@ -61,42 +61,41 @@ router.get("/blog/:blogid", async(req,res)=>{
     try{
         const _id = req.params.blogid
         const singleBlog = await blog.findById(_id)
-        // console.log("chjj",singleBlog);
+        
         if(!singleBlog){
             res.status(400).json({message:"blog Not Found"})
         }
 
         singleBlog.blogImage = `${req.protocol}://${req.get('host')}/images/${singleBlog.blogImage}`
-        // console.log("url", singleBlog);
         res.status(200).json({msg:"view your blog", data: singleBlog})
     }catch(e){
-        // console.log(e.message);
         res.status(400).json({msg:"server error"})
     }
 })
 
 router.delete("/delete/:blogid",authorizeAdmin, async(req,res)=>{
+    const _id = req.params.blogid
+    const findblog = await blog.findById(_id)
+    
     try{
-        const _id = req.params.blogid
-
-        const findblog = await blog.findById(_id)
 
         if(findblog.userId !== req.user){
             return res.status(400).json({message: "You can't delete another admin blog"})
-        }
-
-        fs.unlink(`images/${findblog.blogImage}`, (err) => {
-            if(err){
-                console.log(err);
+        }else{
+            fs.unlink(`images/${findblog.blogImage}`, (err) => {
+                if(err){
+                    console.log(err);
+                }
+            })
+            const deleteBlog = await blog.findByIdAndDelete(_id)
+            console.log("delete", deleteBlog);
+            if(!deleteBlog){
+                return res.status(400).send("Blog is not found for delete")
             }
-        })
-        
-        const deleteBlog = await blog.findByIdAndDelete(_id)
-        if(!deleteBlog){
-            return res.status(400).send("Blog is not found for delete")
         }
-        res.status(200).json({message:"blog deleted successfully", data: deleteBlog})
+        return res.status(200).json({message:"blog deleted successfully", data: deleteBlog})
     }catch(e){
+        console.log(e);
         res.status(400).send(e)
     }
 })

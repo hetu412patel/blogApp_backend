@@ -19,7 +19,7 @@ const blogSchema = new mongoose.Schema({
     category:{
         type:String,
         required: true,
-        enum:["CS-IT", "Travel", "Food"]
+        enum:["cs-it", "travel", "food"]
     },
     userId:{
         type: mongoose.Schema.Types.ObjectId,
