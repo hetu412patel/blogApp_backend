@@ -4,6 +4,6 @@ const {resetpassword, verifyUser, changePassword} = require('../controller/passw
 
 router.post("/sendpasswordlink", resetpassword)
 router.get("/forgetpassword/:id/:token", verifyUser)
-router.post("/:id/:token", changePassword)
+router.patch("/:id/:token", changePassword)
 
 module.exports = router

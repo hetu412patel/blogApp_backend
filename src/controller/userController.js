@@ -32,10 +32,10 @@ const register = async (req,res)=>{
 const getAllUser = async (req,res) => {
     try{
         const allUser = await User.find({})
-        res.status(200).json({data: allUser})               
+        return res.status(200).json({data: allUser})               
     }catch(e){
         console.log(e.message);
-        res.status(400).json({msg: "server error"})
+        return res.status(400).json({msg: "server error"})
     }
 }
 
@@ -62,17 +62,19 @@ const changeRole = async(req,res)=>{
 }
 
 const login = async(req,res)=>{
+    
     const email = req.body.email
     const password = req.body.password
 
 try{
     const findUser = await User.findOne({email: email})
+    
     if(!findUser){
         return res.status(400).json({message:"Invalid Login Details"})
     }
 
     const isMatch = await bcrypt.compare(password, findUser?.password)
-    const token = await findUser.generateAuthToken()
+    const token = await findUser.generateAuthToken("24h")
 
     if(isMatch){
         return res.status(200).json({message: "Login successfully", token: token, data: findUser})

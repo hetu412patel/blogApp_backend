@@ -35,7 +35,7 @@ const myBlogs = async(req, res)=>{
 
 const allBlogs = async(req,res)=>{
     try{
-        const allBlog = await blog.find()
+        const allBlog = await blog.find().populate("userId","name")
         
         allBlog.forEach((blog) => {
             blog.blogImage = `${req.protocol}://${req.get('host')}/images/${blog.blogImage}`
@@ -92,13 +92,14 @@ const deleteBlog = async(req,res)=>{
 }
 
 const updateBlog = async(req,res)=>{
+    
     try{
         const _id = req.params.blogid
         const formData = req.body
         const data = {...formData, blogImage : req.file.filename}
 
         const findblog = await blog.findById(_id)
-
+        console.log(findblog);
         if(findblog.userId.toString() !== req.user.toString()){
             return res.status(400).json({message: "You can't update another admin blog"})
         }else{
@@ -112,7 +113,6 @@ const updateBlog = async(req,res)=>{
             const editBlog = await blog.findByIdAndUpdate(_id, data , {
                 new: true
             })
-            console.log("edit",editBlog );
             if(!editBlog){
                 return res.status(400).json({message:"No blog found"})
             }
