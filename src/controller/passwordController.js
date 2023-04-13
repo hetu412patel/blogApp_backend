@@ -22,13 +22,14 @@ const resetpassword = async(req,res) => {
 
     try{
         const useremail = await User.findOne({email: email})
-        const token = jwt.sign({_id:useremail._id}, process.env.SECRET_KEY , {expiresIn:"120s"})
+        // const token = jwt.sign({_id:useremail._id}, process.env.SECRET_KEY , {expiresIn:"120s"})
+        const token = await useremail.generateAuthToken("120s")
         
         if(token){
             const mailOptions = {
                 from: "process.env.EMAIL",
                 to: email,
-                subject: "Sending Email for Passwor Reset",
+                subject: "Sending Email for Password Reset",
                 text: `This Link valid for 2 MINUTES ${process.env.FRONT_URL}/forgetpassword/${useremail._id}/${token}`
             }
 
@@ -60,7 +61,7 @@ const verifyUser = async(req,res) => {
         }
     }catch(e){
         console.log(e);
-        return res.status(400).json({message: "Not verify"})
+        return res.status(400).json({message: "User not verify"})
     }
 }
 

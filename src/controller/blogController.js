@@ -14,7 +14,6 @@ const addBlog = async (req,res)=>{
         const blog1 = await addBlog.save()
         res.status(201).json({message:"Blog added successfully", data: blog1})
     }catch(e){
-        // console.log("detgf",e);
         res.status(400).json({message:"Internal error", data: e})
     }
 }
@@ -27,7 +26,7 @@ const myBlogs = async(req, res)=>{
             blog.blogImage = `${req.protocol}://${req.get('host')}/images/${blog.blogImage}`
         })
 
-        res.status(201).json({message:"Blog get successfully", data: blogs})
+        res.status(201).json({message:"Blog get successfully", data: myBlogs})
     }catch(e){if(file.mimetype.split('/')[0] === 'image')
         res.status(400).json({message:"Error"})
     }

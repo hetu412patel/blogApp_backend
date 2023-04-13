@@ -46,7 +46,7 @@ const userSchema = new mongoose.Schema({
         lowercase:true,
         default: ["user"],
         enum: ["admin", "user"]
-    }
+    },
     // googleId:{
     //     type: String
     // },
@@ -63,7 +63,7 @@ const userSchema = new mongoose.Schema({
 
 userSchema.methods.generateAuthToken = async function(time){
     try{
-        const token = jwt.sign({_id: this._id}, process.env.SECRET_KEY, {expiresIn: time})
+        const token = jwt.sign({_id: this._id.toString()}, process.env.SECRET_KEY, {expiresIn: time})
         // this.tokens = this.tokens.concat({token})
         // await this.save()
         return token
