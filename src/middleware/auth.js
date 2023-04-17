@@ -17,7 +17,7 @@ const authorizeAdmin = async (req,res,next) => {
         next()
     }catch(e){
         console.log(e);
-        res.status(401).json({msg:"server error", data: e})
+        res.status(419).json({message:"server error", data: e})
     }
 }
 
@@ -38,7 +38,7 @@ const authorizeUser = async(req, res, next) => {
         next()
     }catch(e){
         console.log(e.message);
-        res.status(401).json({msg: "server error"})
+        res.status(419).json({message: "server error"})
     }
 }
 

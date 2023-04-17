@@ -2,6 +2,7 @@ const blog = require("../modals/blog")
 const fs = require('fs')
 
 const addBlog = async (req,res)=>{
+    
     try{
         const addBlog = new blog({
             title: req.body.title,
@@ -21,20 +22,33 @@ const addBlog = async (req,res)=>{
 const myBlogs = async(req, res)=>{
     try{
         const myBlogs = await blog.find({userId: req.user})
-
         myBlogs.forEach((blog) => {
             blog.blogImage = `${req.protocol}://${req.get('host')}/images/${blog.blogImage}`
         })
-
+        
         res.status(201).json({message:"Blog get successfully", data: myBlogs})
-    }catch(e){if(file.mimetype.split('/')[0] === 'image')
+    }catch(e){
+    console.log(e.message);
         res.status(400).json({message:"Error"})
     }
 }
 
 const allBlogs = async(req,res)=>{
     try{
-        const allBlog = await blog.find().populate("userId","name")
+        // const allBlog = await blog.find().populate("userId","name") =>  by using ref & populate
+
+        // using $look-up
+        const allBlog = await blog.aggregate([
+            {
+                $lookup:
+                {
+                    from:"users",
+                    localField:"userId",
+                    foreignField:"_id",
+                    as:"userData"
+                }
+            }
+        ])
         
         allBlog.forEach((blog) => {
             blog.blogImage = `${req.protocol}://${req.get('host')}/images/${blog.blogImage}`
@@ -98,7 +112,7 @@ const updateBlog = async(req,res)=>{
         const data = {...formData, blogImage : req.file.filename}
 
         const findblog = await blog.findById(_id)
-        console.log(findblog);
+        
         if(findblog.userId.toString() !== req.user.toString()){
             return res.status(400).json({message: "You can't update another admin blog"})
         }else{

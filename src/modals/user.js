@@ -27,20 +27,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    // country:{
-    //     type: String,
-    //     required: true
-    // },
     address:{
         type: String,
         required: true
     },
-    // gender:{
-    //     type: String,
-    //     required: true,
-    //     lowercase:true,
-    //     enum: ["male", "female"]
-    // },
     role:{
         type: String,
         lowercase:true,
@@ -54,7 +44,7 @@ const userSchema = new mongoose.Schema({
     //     type: String
     // }
     // tokens:[{
-    //     token:{
+    //     refreshToken:{
     //         type: String,
     //         required: true
     //     }
@@ -67,6 +57,17 @@ userSchema.methods.generateAuthToken = async function(time){
         // this.tokens = this.tokens.concat({token})
         // await this.save()
         return token
+    }catch(e){
+        res.json({message:'Token is not generated due to some reason'})
+    }
+}
+
+userSchema.methods.generateRefreshToken = async function(time){
+    try{
+        const refreshToken = jwt.sign({_id: this._id.toString()}, process.env.REFRESH_TOKEN_SECRET_KEY, {expiresIn: time})
+        // this.tokens = this.tokens.concat({refreshToken})
+        // await this.save()
+        return refreshToken
     }catch(e){
         res.json({message:'Token is not generated due to some reason'})
     }
