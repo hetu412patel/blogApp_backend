@@ -76,7 +76,7 @@ const login = async (req, res) => {
 
         const isMatch = await bcrypt.compare(password, findUser?.password)
 
-        const token = await findUser.generateAuthToken("5s")
+        const token = await findUser.generateAuthToken("30m")
         const refreshToken = await findUser.generateRefreshToken("24h")
 
         if (isMatch) {
@@ -101,7 +101,7 @@ const refreshToken = async (req, res) => {
     try {
 
         const verifyUser = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET_KEY)
-
+    
         const token = jwt.sign({_id: verifyUser._id.toString()}, process.env.SECRET_KEY, {expiresIn: "15m"})
         
         res.status(200).json({ msg:"New Token sended successfully", token: token })

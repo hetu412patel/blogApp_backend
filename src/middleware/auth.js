@@ -42,4 +42,16 @@ const authorizeUser = async(req, res, next) => {
     }
 }
 
-module.exports = {authorizeAdmin, authorizeUser}
+const checkExpiry = async(req,res,next) => {
+    const refreshToken = req.body?.refreshtoken
+    try{
+        const user = await jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET_KEY)
+        if(user){
+            next()
+        }
+    }catch(error){  
+        return res.status(405).json({error: error, message:"Token expiry error login again"})
+    }
+}
+
+module.exports = {authorizeAdmin, authorizeUser, checkExpiry}
