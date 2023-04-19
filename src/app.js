@@ -3,15 +3,15 @@ const cors = require("cors")
 // const passport = require("passport")
 // const cookieSession = require("cookie-session")
 
+const dotenv = require("dotenv");
+dotenv.config();
+
 require("./db/conn")
 const cookieparser = require("cookie-parser")
 const blogRouter = require("./routers/blogRoutes")
 const userRouter = require("./routers/userRoutes")
 const passwordRouter = require("./routers/passwordRoutes")
 // const passportSetup = require("./passport")
-
-const dotenv = require("dotenv");
-dotenv.config();
 
 const port = process.env.PORT 
 const app = express()

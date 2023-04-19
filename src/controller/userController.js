@@ -18,7 +18,7 @@ const register = async (req, res) => {
                 gender: req.body.gender,
                 role: 'user'
             })
-
+        
             const user = await addUser.save()
             res.status(201).send(user)
         } else {
@@ -76,8 +76,8 @@ const login = async (req, res) => {
 
         const isMatch = await bcrypt.compare(password, findUser?.password)
 
-        const token = await findUser.generateAuthToken("30m")
-        const refreshToken = await findUser.generateRefreshToken("24h")
+        const token = await findUser.generateAuthToken("3s")
+        const refreshToken = await findUser.generateRefreshToken("1m")
 
         if (isMatch) {
             return res.status(200).json({ message: "Login successfully", token: token, refreshToken: refreshToken, data: findUser })
@@ -85,7 +85,6 @@ const login = async (req, res) => {
             return res.status(400).json({ message: "Invalid Login Details" })
         }
     } catch (e) {
-        console.log(e.message);
         res.status(400).json({ message: "Invalid Login Details" })
     }
 }
@@ -102,7 +101,7 @@ const refreshToken = async (req, res) => {
 
         const verifyUser = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET_KEY)
     
-        const token = jwt.sign({_id: verifyUser._id.toString()}, process.env.SECRET_KEY, {expiresIn: "15m"})
+        const token = jwt.sign({_id: verifyUser._id.toString()}, process.env.SECRET_KEY, {expiresIn: "5s"})
         
         res.status(200).json({ msg:"New Token sended successfully", token: token })
     } catch (err) {
