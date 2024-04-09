@@ -1,14 +1,12 @@
 const mongoose = require("mongoose")
-
-const url = process.env.MONGODB_URL
-
-// mongoose.connect("mongodb://localhost:27017/blog-app").then(()=>{
+ 
+// mongoose.connect("mongodb://localhost:27017").then(()=>{
 //     console.log("database connection successfully");
 // }).catch((err)=>{
 //     console.log("No connection",err);
 // })
 
-mongoose.connect(url).then(()=>{
+mongoose.connect(process.env.MONGODB_URL).then(()=>{
     console.log("database connection successfully");
 }).catch((err)=>{
     console.log("No connection",err);

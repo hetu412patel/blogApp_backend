@@ -42,7 +42,7 @@ const resetpassword = async(req,res) => {
             })
         }  
     }catch(e){
-        console.log(e);
+        console.log(e?.message);
         res.status(400).json({message:"Internal error", data: e})
     }
 }

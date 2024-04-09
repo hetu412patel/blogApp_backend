@@ -35,20 +35,21 @@ const myBlogs = async(req, res)=>{
 
 const allBlogs = async(req,res)=>{
     try{
-        // const allBlog = await blog.find().populate("userId","name") =>  by using ref & populate
+        // by using ref & populate
+        const allBlog = await blog.find().populate("userId","name");
 
         // using $look-up
-        const allBlog = await blog.aggregate([
-            {
-                $lookup:
-                {
-                    from:"users",
-                    localField:"userId",
-                    foreignField:"_id",
-                    as:"userData"
-                }
-            }
-        ])
+        // const allBlog = await blog.aggregate([
+        //     {
+        //         $lookup:
+        //         {
+        //             from:"users",
+        //             localField:"userId",
+        //             foreignField:"_id",
+        //             as:"userData"
+        //         },
+        //     }
+        // ])
         
         allBlog.forEach((blog) => {
             blog.blogImage = `${req.protocol}://${req.get('host')}/images/${blog.blogImage}`

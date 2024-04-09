@@ -25,14 +25,14 @@ const register = async (req, res) => {
             res.json({ message: "Make sure password and confirmpassword are matching" })
         }
     } catch (e) {
-        console.log(e);
+        console.log(e.message);
         res.status(400).send(e)
     }
 }
 
 const getAllUser = async (req, res) => {
     try {
-        const allUser = await User.find({})
+        const allUser = await User?.find({})
         return res.status(200).json({ data: allUser })
     } catch (e) {
         console.log(e.message);
